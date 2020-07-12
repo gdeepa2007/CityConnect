@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cities.exception.CityConnectException;
 import com.cities.model.CityConnectResponse;
 import com.cities.service.CityConnectService;
 import com.cities.util.CityConnectUtil;
@@ -28,6 +29,10 @@ import io.swagger.annotations.ApiResponses;
 public class CityConnectController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CityConnectController.class);
+	
+	private static final String REQUIRED_INPUT_MSG = "Origin and destination cities are mandatory "
+			+ "and should include only letters and spaces";
+	private static final String OPERATION = "Determine connectivity between cities";
 	
 	@Autowired
 	CityConnectService service;
@@ -55,7 +60,7 @@ public class CityConnectController {
 				|| destination.chars().anyMatch(c -> (!Character.isLetter(c) && !Character.isSpaceChar(c)))) {
 			
 			logger.error("checkCityConnection :: Invalid input");
-			return new ResponseEntity<CityConnectResponse>(HttpStatus.BAD_REQUEST);
+			throw new CityConnectException(REQUIRED_INPUT_MSG, OPERATION, HttpStatus.BAD_REQUEST);
 		}
 		
 		CityConnectResponse response = new CityConnectResponse();
@@ -63,6 +68,7 @@ public class CityConnectController {
 		response.setDestination(destination);
 		response.setAreConnected(service.checkCityConnection(origin, destination));
 		response.setRequestTime(requestTime);
+		response.setOperation(OPERATION);
 		
 		LocalDateTime responseTime = LocalDateTime.now();
 		response.setResponseTime(responseTime);

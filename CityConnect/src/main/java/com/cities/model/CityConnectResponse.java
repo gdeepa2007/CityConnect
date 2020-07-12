@@ -34,4 +34,7 @@ public class CityConnectResponse {
 	
 	@ApiModelProperty (notes = "Time at which API returned the response", position = 5)
 	private LocalDateTime responseTime;
+	
+	@ApiModelProperty (notes = "Operation performed", position = 6)
+	private String operation;
 }

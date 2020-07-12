@@ -6,9 +6,11 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cities.config.CityConnectConfig;
+import com.cities.exception.CityConnectException;
 import com.cities.util.CityConnectUtil;
 
 @Service
@@ -19,6 +21,11 @@ public class CityConnectService {
 	public boolean checkCityConnection (String origin, String destination) {
 		
 		logger.debug("Enter checkCityConnection :: origin = " + origin + " :: destination = " + destination);
+		
+		if (CityConnectUtil.isNullOrEmpty(getAllCities())) {
+			logger.error("checkCityConnection :: Source data from file unavailable");
+			throw new CityConnectException(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
 		boolean isPresent;
 		

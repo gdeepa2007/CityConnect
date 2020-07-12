@@ -16,8 +16,15 @@ import com.cities.model.CityConnectResponse;
 import com.cities.service.CityConnectService;
 import com.cities.util.CityConnectUtil;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping("/")
+@Api (tags = "City Connect API details")
 public class CityConnectController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(CityConnectController.class);
@@ -26,9 +33,17 @@ public class CityConnectController {
 	CityConnectService service;
 
 	@GetMapping("/connected")
+	@ApiOperation (value = "This API takes an origin and a destination cities as input "
+			+ "and determines if the cities are connected by road")
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 400, message = "Bad request. This means either the origin and destination"
+					+ " cities are not passed or an invalid value is passed")})
 	public ResponseEntity<CityConnectResponse> checkCityConnection (
-			@RequestParam(value="origin") String origin,
-			@RequestParam(value="destination") String destination) {
+			@ApiParam (value = "Starting point", required = true)
+				@RequestParam(value="origin") String origin,
+			@ApiParam (value = "Destination", required = true)
+				@RequestParam(value="destination") String destination) {
 	
 		logger.info("Enter checkCityConnection :: origin = " + origin 
 				+ " :: destination = " + destination);
@@ -46,7 +61,7 @@ public class CityConnectController {
 		CityConnectResponse response = new CityConnectResponse();
 		response.setOrigin(origin);
 		response.setDestination(destination);
-		response.setConnected(service.checkCityConnection(origin, destination));
+		response.setAreConnected(service.checkCityConnection(origin, destination));
 		response.setRequestTime(requestTime);
 		
 		LocalDateTime responseTime = LocalDateTime.now();

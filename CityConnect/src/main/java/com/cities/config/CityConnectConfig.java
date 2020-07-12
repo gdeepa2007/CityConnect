@@ -47,8 +47,8 @@ public class CityConnectConfig {
 				.filter(Objects::nonNull)
 				.filter(line -> line.length==2)
 				.forEach(line -> {
-					String city1 = line[0].trim();
-					String city2 = line[1].trim();
+					String city1 = line[0];
+					String city2 = line[1];
 					
 					if (!CityConnectUtil.isNullorEmpty(city1) 
 							&& city1.chars().allMatch(c -> (Character.isLetter(c) || Character.isSpaceChar(c)))
@@ -57,8 +57,8 @@ public class CityConnectConfig {
 					
 						logger.debug("loadCities :: city1 = " + city1 + " :: city2 = " + city2);
 						
-						cities.computeIfAbsent(city1, k -> new ArrayList<>()).add(city2);
-						cities.computeIfAbsent(city2, k -> new ArrayList<>()).add(city1);
+						cities.computeIfAbsent(city1.trim().toUpperCase(), k -> new ArrayList<>()).add(city2.trim().toUpperCase());
+						cities.computeIfAbsent(city2.trim().toUpperCase(), k -> new ArrayList<>()).add(city1.trim().toUpperCase());
 					}
 					
 			});
